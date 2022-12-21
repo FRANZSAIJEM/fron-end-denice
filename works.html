@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200&family=Secular+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Secular+One&display=swap" rel="stylesheet">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Author</title>
+</head>
+<body style="background-color: rgb(255, 234, 225);">
+    <div class="container">
+       
+        <div class="content">
+            <div class="head">
+                <h1 class="h1">Wattpad</h1>
+            </div>
+            <a href="authors.html" class="btn btn-success p-5 float-start"> <i class="fa-solid fa-arrow-left"></i> <i class="fa fa-user"></i> Authors</a>
+            <button class="btn btn-danger float-end p-5 mb-2" data-bs-toggle="modal" data-bs-target="#createWorkModal"> <i class="fa-solid fa-book-open"></i> Add Work</button>
+
+            <div class="modal fade" id="createWorkModal" tabindex="-1" aria-labelledby="createWorkModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="createWorkModalLabel"> <i class='fa-solid fa-person'></i> Create New Author</h1>
+                      <button type="button" class="btn btn-secondary btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+    
+                      
+    
+                        <div class="mb-3" style="display: inline-flex;">
+                            <label for="genre">Genre:</label>
+                            <input type="text" name="genre" id="genre" value="First Name" required>
+                        </div>
+
+
+                        <div class="mb-3" style="display: inline-flex;">
+                            <label for="published">Published:</label>
+                            <input type="date" name="published" id="published" value="Second Name" required>
+                        </div>
+
+
+
+                        <div class="mb-3" style="display: inline-flex;">
+                            <label for="bookSold">Book Sold:</label>
+                            <input type="number" name="bookSold" id="bookSold"required>
+                        </div>
+
+                        
+                        <div class="mb-3">
+                            <label for="authorsName">Author Name:</label>
+                            <select name="authorsName" id="authorsName" class="">
+                                <option value="">Author's Name</option>
+                            </select>
+                          </div>
+                   
+            
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+                      <a type="button" class="btn btn-secondary" id="save_btn">Add Author</a>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+
+              <!--table-->
+
+              <table class="table table-bordered table-striped text-center">
+                <thead>
+                    <tr>
+                        <th>Genre</th>
+                        <th>Published</th>
+                        <th>Book Sold</th>
+                        <th>Author's Name</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+
+                <tbody id="work">
+                    
+                </tbody>
+              </table>
+
+        </div>
+    </div>
+</body>
+<script>
+    function getAllWorks() {
+         fetch("http://localhost:8000/api/works")
+           .then(response=>{
+             if(response.status==200) {
+               response.json()
+                 .then(data=>{
+                  renderWorkTable(data.work)
+                  
+                 })
+             }
+           })
+       }
+ 
+     function renderWorkTable(works){
+         const tbody = $("#work")
+ 
+ 
+         works.forEach((wrk)=>{
+             const tr = $(document.createElement("tr"))
+  
+             tr.append("<td class='text-black'>" + wrk.genre + "</td>")
+             tr.append("<td class='text-black'>" + wrk.published + "</td>")
+             tr.append("<td class='text-black'>" + wrk.bookSold + "</td>")
+             tr.append("<td class='text-black'>" + wrk.authorsName + "</td>")
+             tr.append("<td class='text-center text-black'><a href='showWork.html?id=" + wrk.id + "' class='btn btn-sm btn-success'><i class='fa-solid fa-user-pen'></i> &nbsp; Edit Work</a>")
+                                              
+ 
+             tbody.append(tr)
+         })
+     }
+
+     function getAuthors() {
+        
+        fetch('http://localhost:8000/api/authors')
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+              .then(data=>renderAuthorsSelect(data['author']))
+            }
+          })
+      }
+     
+    function renderAuthorsSelect(authors) {
+        const ath = $("#authorsName")
+        authors.forEach((a)=>{
+          const opt = $(document.createElement("option"))
+          opt.attr('value',a.id)
+          opt.text(a.id)
+          ath.append(opt)
+        })
+      }
+ 
+     function prependWork(wrk){
+         const tbody = $("#work")
+ 
+         const tr = $(document.createElement("tr"))
+   
+         tr.append("<td class='text-bg-primary'>" + wrk.genre + "</td>")
+         tr.append("<td class='text-bg-primary'>" + wrk.published + "</td>")
+         tr.append("<td class='text-bg-primary'>" + wrk.bookSold + "</td>")
+         tr.append("<td class='text-bg-primary'>" + wrk.authorsName + "</td>")
+         tr.append("<td class='text-bg-primary text-center'><a href='showWork.html?id=" + wrk.id + "' class='btn btn-sm btn-danger'><i class='fa-solid fa-user-pen'></i> &nbsp; Edit Work</a>")
+            
+         tbody.prepend(tr)
+     }
+ 
+ 
+     function clearForm() {
+         $("#genre").val()
+         $("#published").val()
+         $("#bookSold").val()
+         $("#authorsName").val()
+
+
+       
+       }
+ 
+       $(document).ready(()=>{
+         getAllWorks()
+         getAuthors()
+ 
+         $("#save_btn").click(()=>{
+           const data = {
+          
+             "genre":$("#genre").val(),
+             "published":$("#published").val(),
+             "bookSold":$("#bookSold").val(),
+             "authorsId":$("#authorsName").val(),
+
+  
+           }
+ 
+           fetch("http://localhost:8000/api/works",{
+             "credentials": "omit",
+             "method": "POST",
+             "body": JSON.stringify(data),
+             "headers":{
+               'Accept':'application/json',
+               'Content-Type':'application/json'
+             }
+           }).then(response=>{
+             if(response.status==200) {
+               response.json()
+                 .then(data=>prependWork(data))
+             }
+           })
+           
+           clearForm()
+           $("#createWorkModal").modal('hide')
+         })
+       })
+       function timedRefresh(timeoutPeriod) {
+     setTimeout("location.reload(true);",timeoutPeriod);
+ }
+ 
+ function convertDate(dateString) {
+  // Split the date string into its parts
+  const parts = dateString.split('/');
+  // Extract the month, day, and year from the parts array
+  const month = parts[0];
+  const day = parts[1];
+  const year = parts[2];
+  // Create a new date string in the desired format
+  const newDateString = year + '/' + month + '/' + day;
+  return newDateString;
+}
+
+
+
+ </script>
+<style>
+    
+    .modal-content{ 
+        background-color: rgb(255, 155, 101); 
+        padding: 50px;
+        font-size: 20px;
+        color: black;
+    }
+    .table{
+        font-size: 35px;
+        color: rgb(79, 76, 76);
+        box-shadow: 10px 10px 20px 2px rgba(0, 0, 0, 0.31);
+    }
+    .content{
+        margin: 20px;
+        font-family: 'Raleway', sans-serif;
+
+    }
+    .head{
+        font-family: 'Secular One', sans-serif;
+    }
+    .h1{
+        color: antiquewhite;
+        font-size: 100px;
+        background-color: #ff500A;
+        padding: 20px;
+        border-radius: 10px;
+        width: 1500px;
+        text-align: center;
+        box-shadow: 10px 10px 20px 2px rgba(0, 0, 0, 0.31);
+    }
+    
+    .container{
+        display: grid;
+        place-content: center;
+    }
+</style>
+</html>

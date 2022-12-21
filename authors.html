@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200&family=Secular+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Secular+One&display=swap" rel="stylesheet">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Author</title>
+</head>
+<body style="background-color: rgb(255, 234, 225);">
+    <div class="container">
+       
+        <div class="content">
+            <div class="head">
+                <h1 class="h1">Wattpad</h1>
+            </div>
+            <button class="btn btn-danger float-end p-5 mb-2" data-bs-toggle="modal" data-bs-target="#createAuthorModal"> <i class="fa fa-plus"></i> Add Author</button>
+
+            <div class="modal fade" id="createAuthorModal" tabindex="-1" aria-labelledby="createAuthorModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="createAuthorModalLabel"> <i class='fa-solid fa-person'></i> Create New Author</h1>
+                      <button type="button" class="btn btn-secondary btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+    
+                      
+    
+                        <div class="mb-3" style="display: inline-flex;">
+                            <label for="firstName">First Name:</label>
+                            <input type="text" name="firstName" id="firstName" value="First Name" required>
+                        </div>
+
+
+                        <div class="mb-3" style="display: inline-flex;">
+                            <label for="lastName">Last Name:</label>
+                            <input type="text" name="lastName" id="lastName" value="Second Name" required>
+                        </div>
+
+
+
+                        <div class="mb-3" style="display: inline-flex;">
+                            <label for="dob">Date of Birth:</label>
+                            <input type="date" name="dob" id="dob"required>
+                        </div>
+                   
+            
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+                      
+                      <a type="button" class="btn btn-secondary" id="save_btn">Add Author</a>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+
+              <!--table-->
+
+              <table class="table table-bordered table-striped text-center">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>First Name</th>
+                        <th>last Name</th>
+                        <th>Date of Birth</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+
+
+
+
+
+                <tbody id="authors">
+                    
+                </tbody>
+              </table>
+              <a href="works.html" class="btn btn-success p-5 float-end"> <i class="fa fa-pencil"></i> Create Work</a>
+        </div>
+    </div>
+</body>
+<script>
+    function getAllAuthors() {
+         fetch("http://localhost:8000/api/authors")
+           .then(response=>{
+             if(response.status==200) {
+               response.json()
+                 .then(data=>{
+                  renderAuthorTable(data.author)
+                  
+                 })
+             }
+           })
+       }
+ 
+     function renderAuthorTable(authors){
+         const tbody = $("#authors")
+ 
+ 
+         authors.forEach((ath)=>{
+             const tr = $(document.createElement("tr"))
+             tr.append("<td class='text-black'>" + ath.id + "</td>")
+             tr.append("<td class='text-black'>" + ath.firstName + "</td>")
+             tr.append("<td class='text-black'>" + ath.lastName + "</td>")
+             tr.append("<td class='text-black'>" + ath.dob + "</td>")
+             tr.append("<td class='text-center text-black'><a href='showAuthor.html?id=" + ath.id + "' class='btn btn-sm btn-success'><i class='fa-solid fa-user-pen'></i> &nbsp; Edit Author</a>")
+                                              
+ 
+             tbody.append(tr)
+         })
+     }
+ 
+     function prependAuthor(ath){
+         const tbody = $("#authors")
+ 
+         const tr = $(document.createElement("tr"))
+         tr.append("<td class='text-bg-primary'>" + ath.id + "</td>")
+         tr.append("<td class='text-bg-primary'>" + ath.firstName + "</td>")
+         tr.append("<td class='text-bg-primary'>" + ath.lastName + "</td>")
+         tr.append("<td class='text-bg-primary'>" + ath.dob + "</td>")
+         tr.append("<td class='text-bg-primary text-center'><a href='showAuthor.html?id=" + ath.id + "' class='btn btn-sm btn-danger'><i class='fa-solid fa-user-pen'></i> &nbsp; Edit Author</a>")
+            
+         tbody.prepend(tr)
+     }
+ 
+ 
+     function clearForm() {
+         $("#firsName").val()
+         $("#lastName").val()
+         $("#dob").val()
+
+       
+       }
+ 
+       $(document).ready(()=>{
+         getAllAuthors()
+ 
+         $("#save_btn").click(()=>{
+           const data = {
+          
+             "firstName":$("#firstName").val(),
+             "lastName":$("#lastName").val(),
+             "dob":$("#dob").val(),
+  
+           }
+ 
+           fetch("http://localhost:8000/api/authors",{
+             "credentials": "omit",
+             "method": "POST",
+             "body": JSON.stringify(data),
+             "headers":{
+               'Accept':'application/json',
+               'Content-Type':'application/json'
+             }
+           }).then(response=>{
+             if(response.status==200) {
+               response.json()
+                 .then(data=>prependAuthor(data))
+             }
+           })
+           
+           clearForm()
+           $("#createAuthorModal").modal('hide')
+         })
+       })
+       function timedRefresh(timeoutPeriod) {
+     setTimeout("location.reload(true);",timeoutPeriod);
+ }
+ 
+ function convertDate(dateString) {
+  // Split the date string into its parts
+  const parts = dateString.split('/');
+  // Extract the month, day, and year from the parts array
+  const month = parts[0];
+  const day = parts[1];
+  const year = parts[2];
+  // Create a new date string in the desired format
+  const newDateString = year + '/' + month + '/' + day;
+  return newDateString;
+}
+
+const dateInput = document.getElementById('#dob');
+dateInput.addEventListener('change', function() {
+  // Get the value of the input element
+  const dateString = this.value;
+  // Convert the date to the desired format
+  const convertedDate = convertDate(dateString);
+  console.log(convertedDate);
+});
+
+ </script>
+<style>
+    
+    .modal-content{ 
+        background-color: rgb(255, 155, 101); 
+        padding: 50px;
+        font-size: 20px;
+        color: black;
+    }
+    .table{
+        font-size: 35px;
+        color: rgb(79, 76, 76);
+        box-shadow: 10px 10px 20px 2px rgba(0, 0, 0, 0.31);
+    }
+    .content{
+        margin: 20px;
+        font-family: 'Raleway', sans-serif;
+
+    }
+    .head{
+        font-family: 'Secular One', sans-serif;
+    }
+    .h1{
+        color: antiquewhite;
+        font-size: 100px;
+        background-color: #ff500A;
+        padding: 20px;
+        border-radius: 10px;
+        width: 1500px;
+        text-align: center;
+        box-shadow: 10px 10px 20px 2px rgba(0, 0, 0, 0.31);
+    }
+    
+    .container{
+        display: grid;
+        place-content: center;
+    }
+</style>
+</html>

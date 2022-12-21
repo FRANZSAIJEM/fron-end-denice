@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Secular+One&display=swap" rel="stylesheet">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Show Author</title>
+</head>
+<body style="background-color: rgb(255, 234, 225);">
+<div class="container">
+<div class="content">
+  <a class="btn btn-secondary" href="authors.html">Back</a>
+
+      <h1 class="author_name">Work Details</h1>
+      <hr>
+      <div class="row">
+        <div class="col-md-4 w-100 ">
+            <div class="mb-3 d-flex" style="display: inline-flex;">
+                <label for="genre">Genre:</label>
+                <input class="form-control" type="text" name="genre" id="genre" value="Genre" required>
+            </div>
+
+
+            <div class="mb-3 d-flex" style="display: inline-flex;">
+                <label for="published">published:</label>
+                <input class="form-control" type="date" name="published" id="published"required>
+            </div>
+
+            <div class="mb-3 d-flex" style="display: inline-flex;">
+                <label for="bookSold">Book Sold:</label>
+                <input class="form-control" type="date" name="bookSold" id="bookSold"required>
+            </div>
+    
+          <div class="">
+            <hr style="width: 500px;">
+                <div class="btns" style="display: inline-flex;">
+                <button id="confirm_update_book" style="width: 125px; padding: 10px;" type="button" class="btn btn-success me-3">
+                    <i class="fa fa-save"></i> Update
+                </button>
+
+                <!-- Button trigger modal -->
+                <button id="confirm_delete_book" style="width: 125px; padding: 10px;" type="button" class="btn btn-danger">
+                    <i class="fa fa-trash"></i> Delete
+                </button>
+                </div>
+        
+
+          </div>
+        </div>
+      </div>
+    
+    </div>
+  </div>
+    <script>
+      function getBooks(id) {
+        fetch('http://localhost:8000/api/works/' + id)
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>renderBook(data))
+            }
+          })
+      }
+
+      $(document).ready(()=>{
+        const urlParams = new URLSearchParams(window.location.search);
+        const param_id = urlParams.get('id');
+
+        getBooks(param_id)
+
+        $("#confirm_update_book").click(()=>{
+          const data = {
+            "genre":$("#genre").val(),
+            "published":$("#published").val(),
+            "bookSold":$("#bookSold").val(),
+         
+          }
+          fetch('http://localhost:8000/api/works/' + param_id,{
+            credentials: "omit",
+            method:"PUT",
+            body: JSON.stringify(data),
+            headers : {
+              "Accept":"application/json",
+              "Content-Type":"application/json"
+            }
+          }).then(response=>{
+            if(response.status==200) {
+              window.location='works.html'
+            }
+          })
+        })
+
+        $("#confirm_delete_book").click(()=>{
+          fetch('http://localhost:8000/api/works/' + param_id,{
+            credentials:"omit",
+            method: "DELETE",
+            headers: {
+              'Accept':'application/json'
+            }
+          }).then(response=>{
+            if(response.status==200) {
+              window.location='works.html'
+              alert("Deleting Work, click 'OK' to proceed")
+            }
+
+          })
+        })
+      })
+
+    </script>
+
+</body>
+<style>
+  
+    
+    .table{
+        font-size: 30px;
+        color: rgb(79, 76, 76);
+        box-shadow: 10px 10px 20px 2px rgba(0, 0, 0, 0.31);
+    }
+    .content{
+        margin: 20px;
+        font-size: 35px;
+        
+    }
+    .head{
+        font-family: 'Secular One', sans-serif;
+    }
+    
+    .container{
+        display: grid;
+        place-content: center;
+    }
+
+
+</style>
+</html>
